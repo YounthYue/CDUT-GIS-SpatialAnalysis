@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace SpatialAnalysis.Network
 {
@@ -75,6 +76,7 @@ namespace SpatialAnalysis.Network
         {
             OpenFileDialog open = new OpenFileDialog();
             open.Filter = "ntw文件(*.ntw)|*.ntw";
+            open.InitialDirectory = new DirectoryInfo(@"..\..\..\").FullName + @"networks\";
             if (open.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 int position = open.FileName.LastIndexOf(@"\");

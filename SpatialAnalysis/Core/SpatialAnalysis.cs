@@ -10,7 +10,7 @@ namespace SpatialAnalysis.Core
         // 判断双精度的浮点数是否相等
         public static bool IsEqual(double a, double b)
         {
-            if (System.Math.Abs(a - b) < 0.00000000001)
+            if (System.Math.Abs(a - b) < 0.00000000000001)
                 return true;
             return false;
         }
@@ -71,7 +71,7 @@ namespace SpatialAnalysis.Core
             return result;
         }
 
-        // 求两直线相交部分
+        // 求两直线交点
         public static Core.Point TwoLineOfIntersectPoint(SimpleLine line1, SimpleLine line2)
         {
             if (line1 != null && line2 != null)
@@ -120,12 +120,13 @@ namespace SpatialAnalysis.Core
                 return RelPointAndLine.LineLeft;
         }
 
-        // 点是否在多边形内
+        // 射线算法
         public static bool IsPolygonContainPoint(Polygon polygon, Point point)
         {
             bool b = IsPolylineOfPolygonContainPoint(polygon, point);
             if (b)
             {
+                // 如果点在多边形的边上，返回false
                 return !b;
             }
             SimpleLine ray = new SimpleLine(point, new Point(point.Y, Constant.INF));
@@ -140,9 +141,11 @@ namespace SpatialAnalysis.Core
                         sum += 1;
                     else if (IsEqual(alpha, 1))
                     {
-                        RelPointAndLine r1 = RelationshipOfPointAndLine(ray, polygon.simpleLines[i].StartPoint);
+                        RelPointAndLine r1 = RelationshipOfPointAndLine(ray, 
+                            polygon.simpleLines[i].StartPoint);
                         // 注意范围
-                        RelPointAndLine r2 = RelationshipOfPointAndLine(ray, polygon.simpleLines[(i + 1) % polygon.simpleLines.Length].EndPoint);
+                        RelPointAndLine r2 = RelationshipOfPointAndLine(ray, 
+                            polygon.simpleLines[(i + 1) % polygon.simpleLines.Length].EndPoint);
                         if (r1 == r2)
                         {
                             // 同边加2
@@ -153,9 +156,12 @@ namespace SpatialAnalysis.Core
                         else if (r2 == RelPointAndLine.LineOn)
                         {
                             // 判断三条边是否为凸包
-                            RelPointAndLine r3 = RelationshipOfPointAndLine(polygon.simpleLines[i], polygon.simpleLines[(i + 1) % polygon.simpleLines.Length].EndPoint);
+                            RelPointAndLine r3 = RelationshipOfPointAndLine(
+                                polygon.simpleLines[i],
+                                polygon.simpleLines[(i + 1) % polygon.simpleLines.Length].EndPoint);
                             // 注意范围
-                            RelPointAndLine r4 = RelationshipOfPointAndLine(polygon.simpleLines[(i + 1) % polygon.simpleLines.Length],
+                            RelPointAndLine r4 = RelationshipOfPointAndLine(
+                                polygon.simpleLines[(i + 1) % polygon.simpleLines.Length],
                                 polygon.simpleLines[(i + 2) % polygon.simpleLines.Length].EndPoint);
                             if (r3 == r4)
                                 // 凸包加2

@@ -39,9 +39,9 @@
             this.打开普通网络数据ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.保存网络数据集ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tIN生成示意ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.打开TIN文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.打开TIN文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -53,7 +53,7 @@
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(0, 26);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(539, 296);
+            this.pictureBox1.Size = new System.Drawing.Size(668, 400);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
@@ -70,7 +70,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 3, 0, 3);
-            this.menuStrip1.Size = new System.Drawing.Size(539, 26);
+            this.menuStrip1.Size = new System.Drawing.Size(668, 26);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -142,14 +142,21 @@
             this.tIN生成示意ToolStripMenuItem.Text = "TIN生成示意";
             this.tIN生成示意ToolStripMenuItem.Click += new System.EventHandler(this.tIN生成示意ToolStripMenuItem_Click);
             // 
+            // 打开TIN文件ToolStripMenuItem
+            // 
+            this.打开TIN文件ToolStripMenuItem.Name = "打开TIN文件ToolStripMenuItem";
+            this.打开TIN文件ToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.打开TIN文件ToolStripMenuItem.Text = "打开TIN文件";
+            this.打开TIN文件ToolStripMenuItem.Click += new System.EventHandler(this.打开TIN文件ToolStripMenuItem_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Font = new System.Drawing.Font("仿宋", 10F);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 322);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 426);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(539, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(668, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -160,18 +167,11 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(154, 17);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
-            // 打开TIN文件ToolStripMenuItem
-            // 
-            this.打开TIN文件ToolStripMenuItem.Name = "打开TIN文件ToolStripMenuItem";
-            this.打开TIN文件ToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-            this.打开TIN文件ToolStripMenuItem.Text = "打开TIN文件";
-            this.打开TIN文件ToolStripMenuItem.Click += new System.EventHandler(this.打开TIN文件ToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(539, 344);
+            this.ClientSize = new System.Drawing.Size(668, 448);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -180,6 +180,7 @@
             this.Text = "点击绘制线或绘制面开始绘制，右击画板绘制结束！";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

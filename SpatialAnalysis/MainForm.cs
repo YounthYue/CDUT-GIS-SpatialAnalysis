@@ -25,6 +25,7 @@ namespace SpatialAnalysis
         // 画板等工具初始属性值
         public Graphics Graph;
         private Pen pen;
+        private Brush brush;
         private Font font;
 
         public PictureBox PictureBox
@@ -98,6 +99,7 @@ namespace SpatialAnalysis
         {
             Graph = pictureBox1.CreateGraphics();
             pen = Pens.Red;
+            brush = Brushes.Yellow;
         }
 
         public void ShutDownPicBox()
@@ -119,7 +121,7 @@ namespace SpatialAnalysis
                         if (drawPolylinePoints != null && drawPolylinePoints.Length > 0)
                             Array.Clear(drawPolylinePoints, 0, drawPolylinePoints.Length);
                         drawPolylinePoints = list.ToArray();
-                        Graph.DrawLines(Pens.Red, drawPolylinePoints);
+                        Graph.DrawLines(pen, drawPolylinePoints);
                     }
                     if (DrawPen == DrawPenTpye.画网络)
                     {
@@ -164,6 +166,8 @@ namespace SpatialAnalysis
                     {
                         MessageBox.Show("绘制的点不足两个，无法绘制线！");
                         ShutDownPicBox();
+                        DrawPen = DrawPenTpye.关闭;
+                        清空画板ToolStripMenuItem_Click(new object(), new EventArgs());
                         return;
                     }
                     ShutDownPicBox();
@@ -175,10 +179,12 @@ namespace SpatialAnalysis
                     {
                         MessageBox.Show("绘制的点不足三个，无法绘制面！");
                         ShutDownPicBox();
+                        DrawPen = DrawPenTpye.关闭;
+                        清空画板ToolStripMenuItem_Click(new object(), new EventArgs());
                         return;
                     }
                     drawPolygonPoints = list.ToArray();
-                    Graph.FillPolygon(Brushes.Yellow, drawPolygonPoints);
+                    Graph.FillPolygon(brush, drawPolygonPoints);
                     ShutDownPicBox();
                     MessageBox.Show("面绘制完成！");
                 }
@@ -439,6 +445,7 @@ namespace SpatialAnalysis
                     }
 
                 }
+
                 // 根据保留的顶点获取裁剪后得到的线段集
                 for (int i = 0; i < preparedPoints.Count; i++)
                 {
@@ -450,7 +457,7 @@ namespace SpatialAnalysis
                 // 绘制结果
                 InitPicBox();
                 Graph.Clear(this.pictureBox1.BackColor);
-                Graph.FillPolygon(Brushes.Yellow, drawPolygonPoints);
+                Graph.FillPolygon(brush, drawPolygonPoints);
                 for (int i = 0; i < drawResultPoints.Length - 1; )
                 {
                     Graph.DrawLine(pen, drawResultPoints[i], drawResultPoints[i + 1]);
@@ -645,6 +652,11 @@ namespace SpatialAnalysis
             ShutDownPicBox();
             NetworkForm fm = new NetworkForm(tin, this);
             fm.Show();
+        }
+
+        private void MainForm_SizeChanged(object sender, EventArgs e)
+        {
+            this.PicBoxHeight = this.pictureBox1.Height;
         }
     }
 }

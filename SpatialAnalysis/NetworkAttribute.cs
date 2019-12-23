@@ -24,6 +24,7 @@ namespace SpatialAnalysis
         {
             InitializeComponent();
             this.network = network;
+            this.生成网络结构ToolStripMenuItem.Enabled = false;
         }
 
         public DataGridView NodeDataGridView
@@ -48,7 +49,6 @@ namespace SpatialAnalysis
             InitDataGrid();
             // 加载网络属性表
             LoadSimpleNetwork();
-            this.生成网络结构ToolStripMenuItem.Enabled = false;
         }
 
         private void InitDataGrid()

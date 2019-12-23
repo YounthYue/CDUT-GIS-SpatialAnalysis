@@ -554,37 +554,6 @@ namespace SpatialAnalysis.Network
             baseBounds.Add(nodes[min_index]);
             baseBounds.Add(nodes[max_index]);
 
-            // 寻找左上角点与右下角点
-            //Core.SimpleLine line = new Core.SimpleLine(baseBounds[0].Position, baseBounds[1].Position);
-            //foreach (var item in nodes)
-            //{
-            //    double lM = 0;
-            //    Node lm = null;
-            //    double rM = 0;
-            //    Node rm = null;
-            //    Core.RelPointAndLine rel = Core.SpatialAnalysis.RelationshipOfPointAndLine(line, item.Position);
-            //    if (rel == Core.RelPointAndLine.LineLeft)
-            //    {
-            //        if (item.Position.DistanceWith(line) > lM)
-            //        {
-            //            lM = item.Position.DistanceWith(line);
-            //            lm = item;
-            //        }
-            //    }
-            //    else if (rel == Core.RelPointAndLine.LineRight)
-            //    {
-            //        if (item.Position.DistanceWith(line) > rM)
-            //        {
-            //            rM = item.Position.DistanceWith(line);
-            //            rm = item;
-            //        }
-            //    }
-            //    if (lm != null)
-            //        baseBounds.Insert(1, lm);
-            //    if (rm != null)
-            //        baseBounds.Add(rm);
-            //}
-
             if (nodes.Count == 4)
             {
                 int a = 1;

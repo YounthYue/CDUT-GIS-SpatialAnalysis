@@ -157,16 +157,27 @@ namespace SpatialAnalysis.Network
             // 递归深度
             int num1 = 0;
             // 向内收缩算法
-            InShrink(
-                oldNodes,
-                newNodes,
+            //InShrink(
+            //    oldNodes,
+            //    newNodes,
+            //    oldEdges,
+            //    CopyObjectList(nodes),
+            //    nodes,
+            //    edges,
+            //    triangles,
+            //    ref num1);
+            // MutileConvex(nodes, edges, oldNodes);
+
+            // 向内收缩算法2
+            InShrink2(
+                null,
                 oldEdges,
                 CopyObjectList(nodes),
                 nodes,
                 edges,
                 triangles,
                 ref num1);
-            // MutileConvex(nodes, edges, oldNodes);
+
             // 为边、三角形生成Id
             for (int i = 0; i < edges.Count; i++)
             {
@@ -206,6 +217,87 @@ namespace SpatialAnalysis.Network
             }
             else
                 return;
+        }
+
+        // 向内收缩算法2
+        private void InShrink2(
+            List<Edge> oldEdges,
+            List<Edge> curEdges,
+            List<Node> nodePool,
+            List<Node> nodes,
+            List<Edge> edges,
+            List<Triangle> triangles,
+            ref int num1)
+        {
+            if(nodePool.Count == 7)
+            {
+                int a = 1;
+            }
+            List<Edge> newEdges = new List<Edge>();
+            // 从nodePool寻找最佳点
+            foreach(var item in curEdges)
+            {
+                List<Node> newNodes = new List<Node>();
+                // 寻找指定边与新的结点，满足空圆法则的结点群
+                MinCircumCircle(item, nodePool, ref newNodes, Core.RelPointAndLine.LineRight);
+                // 满足要求的结点遍历完毕
+                if (newNodes.Count == 0)
+                    continue;
+                else
+                {
+                    // 寻找满足最短距离和的结点
+                    Node newNode = null;
+                    double distance = Core.Constant.INF;
+                    foreach(var node in newNodes)
+                    {
+                        if(node.DistanceWith(item.StartNode) + node.DistanceWith(item.EndNode) < distance)
+                        {
+                            newNode = node;
+                        }
+                    }
+                    Edge e1 = new Edge(item.StartNode, newNode);
+                    if (e1.FindExistIn_ByNodeId(newEdges) == null 
+                        && (oldEdges == null || e1.FindExistIn_ByNodeId(oldEdges) == null)
+                        && e1.FindExistIn_ByNodeId(curEdges) == null)
+                        newEdges.Add(e1);
+                    if (e1.FindExistIn_ByNodeId(edges) == null)
+                        edges.Add(e1);
+                    Edge e2 = new Edge(newNode, item.EndNode);
+                    if (e2.FindExistIn_ByNodeId(newEdges) == null 
+                        && (oldEdges == null || e2.FindExistIn_ByNodeId(oldEdges) == null) 
+                        && e2.FindExistIn_ByNodeId(curEdges) == null)
+                        newEdges.Add(e2);
+                    if (e2.FindExistIn_ByNodeId(edges) == null)
+                        edges.Add(e2);
+                    Triangle triangle = new Triangle(item.StartNode, item.EndNode, newNode);
+                    if(triangle.FindExistIn_ByNodeId(triangles) == null)
+                        triangles.Add(triangle);
+                }
+            }
+            // 移除掉oldEdges的结点
+            if (oldEdges != null)
+            {
+                foreach(var item in oldEdges)
+                {
+                    nodePool.Remove(item.StartNode);
+                }
+            }
+            // 结点池为空，退出递归
+            if (nodePool.Count == 0)
+            {
+                return;
+            }
+            // 进行下一层递归
+            num1 += 1;
+            InShrink2(
+                curEdges,
+                newEdges,
+                nodePool,
+                nodes,
+                edges,
+                triangles,
+                ref num1
+            );
         }
 
         // 向内收缩算法
@@ -675,7 +767,7 @@ namespace SpatialAnalysis.Network
                 foreach (var item2 in oldPool)
                 {
                     double distance = center.DistanceWith(item2.Position);
-                    if (distance - radius < -0.0000001)
+                    if (distance - radius < -0.0000000000001)
                     {
                         label = -1;
                         break;
@@ -685,6 +777,46 @@ namespace SpatialAnalysis.Network
                 {
                     newNode = item;
                     break;
+                }
+            }
+        }
+
+        // 寻找一堆符合空圆法则的结点
+        private void MinCircumCircle(Edge edge, List<Node> nodePool, ref List<Node> newNodes, Core.RelPointAndLine rel)
+        {
+            foreach (var item in nodePool)
+            {
+                Core.RelPointAndLine relTemp = Core.SpatialAnalysis.RelationshipOfPointAndLine(
+                    new Core.SimpleLine(edge.StartNode.Position, edge.EndNode.Position), item.Position);
+                if (relTemp != rel)
+                    continue;
+                Core.Point center = null;
+                double radius = 0;
+                ThreePointsToCircle(edge.StartNode.Position, edge.EndNode.Position, item.Position, ref center, ref radius);
+                if (center == null)
+                {
+                    int a = 0;
+                    ThreePointsToCircle(edge.StartNode.Position, edge.EndNode.Position, item.Position, ref center, ref radius);
+                }
+                int label = 0;
+
+                List<Node> oldPool = CopyObjectList(nodePool);
+                oldPool.Remove(edge.StartNode);
+                oldPool.Remove(edge.EndNode);
+                oldPool.Remove(item);
+                foreach (var item2 in oldPool)
+                {
+                    double distance = center.DistanceWith(item2.Position);
+                    if (distance - radius < -0.0000000000001)
+                    {
+                        label = -1;
+                        break;
+                    }
+                }
+                if (label == 0)
+                {
+                    newNodes.Add(item);
+                    continue;
                 }
             }
         }

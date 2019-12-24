@@ -16,6 +16,7 @@ namespace SpatialAnalysis
         画面,
         画网络,
         画TIN,
+        画凸包,
         关闭
     }
     public partial class MainForm : Form
@@ -141,7 +142,7 @@ namespace SpatialAnalysis
                         // 添加部分边
                         // AddPartConnectedEdge();
                     }
-                    if (DrawPen == DrawPenTpye.画TIN)
+                    if (DrawPen == DrawPenTpye.画TIN || DrawPen == DrawPenTpye.画凸包)
                     {
                         List<Network.Node> nodes = new List<Network.Node>();
                         for (int i = 0; i < list.Count; i++)
@@ -149,7 +150,10 @@ namespace SpatialAnalysis
                             nodes.Add(new Network.Node(i + 1, new Core.Point(list[i].X, PicBoxHeight - list[i].Y)));
                         }
                         // MidLineTest(nodes);
-                        TIN = new Network.TIN(nodes);
+                        if (DrawPen == DrawPenTpye.画TIN)
+                            TIN = new Network.TIN(nodes);
+                        else
+                            TIN = new Network.TIN(nodes, 0);
                         TIN.Show(Graph, pictureBox1, PicBoxHeight);
                     }
                 }
@@ -198,7 +202,7 @@ namespace SpatialAnalysis
                     ShutDownPicBox();
                     MessageBox.Show("结点与边采集完成！");
                 }
-                if (DrawPen == DrawPenTpye.画TIN)
+                if (DrawPen == DrawPenTpye.画TIN || DrawPen == DrawPenTpye.画凸包)
                 {
                     ShutDownPicBox();
                     MessageBox.Show("TIN示意完成！");
@@ -657,6 +661,26 @@ namespace SpatialAnalysis
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
             this.PicBoxHeight = this.pictureBox1.Height;
+        }
+
+        private void 凸包生成示意ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (DrawPen != DrawPenTpye.画凸包 && DrawPen != DrawPenTpye.关闭)
+            {
+                MessageBox.Show("当前绘制完成，点击右键完成绘制！");
+                return;
+            }
+            else if (DrawPen == DrawPenTpye.画凸包)
+            {
+                return;
+            }
+            else
+            {
+                //netForm = new NetworkAttribute(this);
+                //netForm.Show();
+                DrawPen = DrawPenTpye.画凸包;
+                InitPicBox();
+            }
         }
     }
 }

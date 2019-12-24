@@ -79,72 +79,7 @@ namespace SpatialAnalysis.Network
             this.Nodes = CopyObjectList(nodes);
             if (nodes.Count < 3)
                 return; // 以下操作至少需要三个结点
-            //// 生成不规则三角网算法 
-            //// 算法初始化开始
-            //List<Node> nodePool = CopyObjectList(this.Nodes);
-            //List<Edge> edges = new List<Edge>();
-            //// 选取初始点
-            //Node node_0 = nodes[0];
-            //// 选取初始边(距离最小原则)
-            //Node node_1 = null;
-            //double dMin = 10000000;
-            //for (int i = 1; i < nodes.Count; i++)
-            //{
-            //    double d = node_0.DistanceWith(nodes[i]);
-            //    if (d < dMin)
-            //    {
-            //        dMin = d;
-            //        node_1 = nodes[i];
-            //    }
-            //}
-            //nodePool.Remove(node_0);
-            //nodePool.Remove(node_1);
-            //Edge edge_0 = new Edge(node_0, node_1);
-            //edges.Add(edge_0);
-
-            //// 递归生成三角形，遵循空圆法则以及最大最小角准则
-            //if (nodes.Count <= 2)
-            //    return; // 以下操作至少需要三个结点
-            //List<Triangle> triangles = new List<Triangle>();
-
-            //// 寻找指定边右侧，满足空圆法则的结点
-            //Node newNode = null;
-            //if (nodes.Count == 4)
-            //{
-            //    int a = 1;
-            //}
-            //// 初始边右侧遍历
-            //MinCircumCircle(edge_0, nodePool, nodes, ref newNode, Core.RelPointAndLine.LineRight);
-            //if (newNode != null)
-            //{
-            //    nodePool.Remove(newNode);
-            //    triangles.Add(new Triangle(edge_0.StartNode, edge_0.EndNode, newNode));
-            //    Edge edge_1 = new Edge(edge_0.StartNode, newNode);
-            //    edges.Add(edge_1);
-            //    Edge edge_2 = new Edge(edge_0.EndNode, newNode);
-            //    edges.Add(edge_2);
-            //    // 算法初始化结束
-            //    // Create TIN
-            //    CreateTIN(edge_1, nodePool, nodes, edges, triangles);
-            //    CreateTIN(edge_2, nodePool, nodes, edges, triangles);
-            //}
-            //newNode = null;
-            // 初始边左侧遍历
-            //MinCircumCircle(edge_0, nodePool, nodes, ref newNode, Core.RelPointAndLine.LineLeft);
-            //if (newNode != null)
-            //{
-            //    nodePool.Remove(newNode);
-            //    triangles.Add(new Triangle(edge_0.StartNode, edge_0.EndNode, newNode));
-            //    Edge edge_1 = new Edge(edge_0.StartNode, newNode);
-            //    edges.Add(edge_1);
-            //    Edge edge_2 = new Edge(edge_0.EndNode, newNode);
-            //    edges.Add(edge_2);
-            //    // 算法初始化结束
-            //    // Create TIN
-            //    CreateTIN(edge_1, nodePool, nodes, edges, triangles);
-            //    CreateTIN(edge_2, nodePool, nodes, edges, triangles);
-            //}
-            //newNode = null;
+           
             List<Edge> edges = new List<Edge>();
             List<Triangle> triangles = new List<Triangle>();
             // 闭包收缩算法中间变量
@@ -156,16 +91,6 @@ namespace SpatialAnalysis.Network
             oldEdges = CopyObjectList(edges);
             // 递归深度
             int num1 = 0;
-            // 向内收缩算法
-            //InShrink(
-            //    oldNodes,
-            //    newNodes,
-            //    oldEdges,
-            //    CopyObjectList(nodes),
-            //    nodes,
-            //    edges,
-            //    triangles,
-            //    ref num1);
             // MutileConvex(nodes, edges, oldNodes);
 
             // 向内收缩算法2
@@ -173,7 +98,6 @@ namespace SpatialAnalysis.Network
                 null,
                 oldEdges,
                 CopyObjectList(nodes),
-                nodes,
                 edges,
                 triangles,
                 ref num1);
@@ -187,6 +111,39 @@ namespace SpatialAnalysis.Network
                 double square = deltaX * deltaX + deltaY * deltaY;
                 edges[i].EdgeValue = System.Math.Sqrt(square);
             }
+            for (int i = 0; i < triangles.Count; i++)
+            {
+                triangles[i].TriangleId = i + 1;
+            }
+            // 为TIN添加边和三角形
+            this.Edges = edges;
+            this.Triangles = triangles;
+            // TIN Created Successful
+        }
+
+        public TIN(List<Node> nodes, int convexShowLabel)
+        {
+            if (nodes == null || nodes.Count == 0)
+                return;
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                nodes[i].NodeId = i + 1;
+            }
+            this.Nodes = CopyObjectList(nodes);
+            if (nodes.Count < 3)
+                return; // 以下操作至少需要三个结点
+
+            List<Edge> edges = new List<Edge>();
+            List<Triangle> triangles = new List<Triangle>();
+            // 闭包收缩算法中间变量
+            List<Node> oldNodes = new List<Node>();
+            List<Node> newNodes = new List<Node>();
+            List<Edge> oldEdges = new List<Edge>();
+            // 为TIN生成凸包边界
+            CreateConvexBound(nodes, edges, oldNodes);
+            oldEdges = CopyObjectList(edges);
+            MutileConvex(nodes, edges, oldNodes);
+            // 为边、三角形生成Id
             for (int i = 0; i < triangles.Count; i++)
             {
                 triangles[i].TriangleId = i + 1;
@@ -224,7 +181,6 @@ namespace SpatialAnalysis.Network
             List<Edge> oldEdges,
             List<Edge> curEdges,
             List<Node> nodePool,
-            List<Node> nodes,
             List<Edge> edges,
             List<Triangle> triangles,
             ref int num1)
@@ -293,7 +249,6 @@ namespace SpatialAnalysis.Network
                 curEdges,
                 newEdges,
                 nodePool,
-                nodes,
                 edges,
                 triangles,
                 ref num1
@@ -646,10 +601,6 @@ namespace SpatialAnalysis.Network
             baseBounds.Add(nodes[min_index]);
             baseBounds.Add(nodes[max_index]);
 
-            if (nodes.Count == 4)
-            {
-                int a = 1;
-            }
             // 寻找所有的凸边界点
             for (int i = 0; i < baseBounds.Count; i++)
             {
